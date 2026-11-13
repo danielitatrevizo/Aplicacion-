@@ -1,4 +1,3 @@
-
 import streamlit as st
 import numpy as np
 import pandas as pd
@@ -144,12 +143,13 @@ estado, mensaje = evaluar_conservacion(
     temperatura, horas
 )
 
-# PESTAÑAS PRINCIPALES
-tab1, tab2, tab3, tab4 = st.tabs([
+# PESTAÑAS PRINCIPALES (Se agregó tab5)
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📈 Curva de Proliferación",
     "🌡️ Zona Peligrosa",
     "📋 Recomendaciones",
-    "🔬 Estado del Alimento"
+    "🔬 Estado del Alimento",
+    "📜 Normas NOM"
 ])
 
 # PESTAÑA 1
@@ -316,7 +316,7 @@ with tab3:
     st.write(f"**Tiempo:** {horas:g} horas")
     st.info(mensaje)
 
-# PESTAÑA 4: NUEVA FUNCIÓN
+# PESTAÑA 4
 with tab4:
     st.subheader("🔬 Evaluación del estado del alimento")
 
@@ -426,17 +426,55 @@ with tab4:
                 "o calentarlo para garantizar su seguridad."
             )
 
-# FUENTES
-st.divider()
+# PESTAÑA 5: NORMATIVA MEXICANA (NOM)
+with tab5:
+    st.subheader("📜 Normas Oficiales Mexicanas (NOM) en Inocuidad Alimentaria")
 
-with st.expander("📚 Fuentes de información"):
-    st.markdown("""
-    - [FDA - Food Safety](https://www.fda.gov/food)
-    - [USDA - Food Safety and Inspection Service](https://www.fsis.usda.gov/)
-    - [OMS - Inocuidad de los alimentos](https://www.who.int/health-topics/food-safety)
-    """)
+    st.write(
+        "En México, la Secretaría de Salud (a través de COFEPRIS) "
+        "establece las regulaciones técnicas obligatorias para "
+        "garantizar la inocuidad, conservación y correcta información "
+        "de los alimentos."
+    )
 
-st.caption(
-    "Proyecto académico de Programación | "
-    "Facultad de Ciencias Químicas - UACH | "
-    "Simulador educativo, no certificación de inocuidad.")
+    # 1. Evaluación dinámica de la temperatura según NOM-251-SSA1-2009
+    st.markdown("### 🌡️ Cumplimiento térmico según la NOM-251-SSA1-2009")
+
+    if temperatura <= -18:
+        st.success(
+            f"**Temperatura seleccionada ({temperatura} °C):** Cumple con el parámetro "
+            "de **congelación** de la NOM-251-SSA1-2009 (máximo -18 °C)."
+        )
+    elif temperatura <= 4:
+        st.success(
+            f"**Temperatura seleccionada ({temperatura} °C):** Cumple con el parámetro "
+            "de **refrigeración** de la NOM-251-SSA1-2009 (máximo 4 °C)."
+        )
+    elif temperatura < 60:
+        st.error(
+            f"**Temperatura seleccionada ({temperatura} °C):** Fuera de rango seguro. "
+            "La NOM-251-SSA1-2009 exige mantener los alimentos perecederos a "
+            "**4 °C o menos** (en frío) o a **60 °C o más** (en caliente)."
+        )
+    else:
+        st.success(
+            f"**Temperatura seleccionada ({temperatura} °C):** Cumple con el parámetro "
+            "de **mantenimiento en caliente** de la NOM-251-SSA1-2009 (mínimo 60 °C)."
+        )
+
+    st.divider()
+
+    # 2. Normativa específica según el alimento seleccionado en la barra lateral
+    st.markdown(f"### 📌 Normas aplicables a: *{alimento}*")
+
+    if alimento == "Carnes y Pescados":
+        st.info("""
+        - **NOM-213-SSA1-2018:** Disposiciones y especificaciones sanitarias para productos cárnicos procesados y establecimientos dedicados a su proceso.
+        - **NOM-242-SSA1-2009:** Especificaciones sanitarias y métodos de prueba para productos de la pesca frescos, refrigerados, congelados y procesados (exige mantener productos frescos en hielo o refrigeración $\le 4\text{ }^\circ\text{C}$).
+        - **NOM-194-SSA1-2004:** Especificaciones sanitarias en establecimientos dedicados al sacrificio, almacenamiento, transporte y expendio de carne.
+        """)
+
+    elif alimento == "Lácteos y Huevos":
+        st.info("""
+        - **
+        
